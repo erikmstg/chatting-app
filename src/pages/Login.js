@@ -1,5 +1,6 @@
 import { Col, Row, Button, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useLoginUserMutation } from "../services/appApi";
 import "./Login.css";
 import { useState } from "react";
 
@@ -7,9 +8,19 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const navigate = useNavigate();
+
+  const [loginUser, { isLoading, err }] = useLoginUserMutation();
+
   const handleLogin = (e) => {
     e.preventDefault();
-    console.log("login");
+    loginUser({ email, password }).then(({ data }) => {
+      if (data) {
+        // socket work
+        console.log(data);
+        navigate("/chat");
+      }
+    });
   };
 
   return (
