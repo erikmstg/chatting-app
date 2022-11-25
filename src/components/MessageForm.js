@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Col, Form, Row } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import "./MessageForm.css";
 
 const MessageForm = () => {
@@ -9,11 +10,19 @@ const MessageForm = () => {
     console.log(message, "send message");
   };
 
+  const user = useSelector((state) => state.user);
+
   return (
     <>
-      <div className="message-output"></div>
+      <div className="message-output">
+        {!user && (
+          <div className="alert alert-danger">
+            <Form.Text>Plase login</Form.Text>
+          </div>
+        )}
+      </div>
       <Form onSubmit={handleSend}>
-        <Row>
+        <Row className="">
           <Col md={11}>
             <Form.Group>
               <Form.Control
@@ -21,6 +30,7 @@ const MessageForm = () => {
                 placeholder="Your Message..."
                 onChange={(e) => setMessage(e.target.value)}
                 value={message}
+                disabled={!user}
               />
             </Form.Group>
           </Col>
@@ -29,6 +39,7 @@ const MessageForm = () => {
               variant="primary"
               type="submit"
               style={{ width: "100%", backgroundColor: "green" }}
+              disabled={!user}
             >
               <i className="fas fa-paper-plane" />
             </Button>
