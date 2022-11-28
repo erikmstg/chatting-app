@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useLoginUserMutation } from "../services/appApi";
 import "./Login.css";
 import { useContext, useState } from "react";
-import { AppContext } from "../context/appContext";
+import { AppContext } from "../context/AppContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,7 +19,7 @@ const Login = () => {
     e.preventDefault();
     loginUser({ email, password }).then(({ data }) => {
       if (data) {
-        console.log(data);
+        // console.log(data);
         // socket work
         socket.emit("new-user");
 

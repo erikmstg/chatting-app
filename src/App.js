@@ -8,11 +8,11 @@ import Chat from "./pages/Chat";
 import { Container } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useState } from "react";
-import { socket, AppContext } from "./context/appContext";
+import { socket, AppContext } from "./context/AppContext";
 
 function App() {
   const [rooms, setRooms] = useState([]);
-  const [currentRoom, setCurrentRooms] = useState([]);
+  const [currentRoom, setCurrentRoom] = useState([]);
   const [members, setMembers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [privateMemberMessage, setPrivateMemberMessage] = useState({});
@@ -28,7 +28,7 @@ function App() {
         rooms,
         setRooms,
         currentRoom,
-        setCurrentRooms,
+        setCurrentRoom,
         members,
         setMembers,
         messages,
