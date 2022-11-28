@@ -3,9 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const userRoute = require("./routes/UserRoute");
 const User = require("./models/UserModel");
-
-// import the connection env to database
-require("./connection");
+const Message = require("./models/MessageModel");
 
 const app = express();
 dotenv.config();
@@ -14,6 +12,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// import the connection env to database
+require("./connection");
 // Routes
 app.use("/users", userRoute);
 
@@ -29,16 +29,13 @@ const io = require("socket.io")(server, {
 });
 
 // after create context.provider
-app.get("/rooms", (req, res) => {
-  res.json(rooms);
-});
 
 async function getLastMessagesFromRoom(room) {
   let roomMessages = await Message.aggregate([
     { $match: { to: room } },
 
     // create for each date a group messages all the messages by that specific date
-    { $group: { _id: "$date", messageByDate: { push: "$$ROOT" } } },
+    { $group: { _id: "$date", messagesByDate: { $push: "$$ROOT" } } },
   ]);
 
   return roomMessages;
@@ -46,7 +43,7 @@ async function getLastMessagesFromRoom(room) {
 
 function sortRoomMessagesByDate(messages) {
   return messages.sort(function (a, b) {
-    // change date (mm/dd/yyyy) => (yyyy/mm/dd)
+    // change date (mm/dd/yyyy) to (yyyy/mm/dd)
     let date = a._id.split("/");
     let newDate = b._id.split("/");
 
@@ -80,6 +77,29 @@ io.on("connection", (socket) => {
     // and then send back to client
     socket.emit("room-messages", roomMessages);
   });
+
+  // create messages
+  socket.on("message-room", async (room, content, sender, time, date) => {
+    // console.log("msg: ", date);
+    const newMessage = await Message.create({
+      content,
+      from: sender,
+      date,
+      time,
+      to: room,
+    });
+    let roomMessages = await getLastMessagesFromRoom(room);
+    roomMessages = sortRoomMessagesByDate(roomMessages);
+    // sending message to room
+    io.to(room).emit("room-messages", roomMessages);
+
+    // when user not in room, they should get notifications
+    socket.broadcast.emit("notifications", room);
+  });
+});
+
+app.get("/rooms", (req, res) => {
+  res.json(rooms);
 });
 
 // server
