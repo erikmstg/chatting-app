@@ -96,6 +96,22 @@ io.on("connection", (socket) => {
     // when user not in room, they should get notifications
     socket.broadcast.emit("notifications", room);
   });
+
+  app.delete("/logout", async (req, res) => {
+    try {
+      const { _id, newMessage } = req.body;
+      const user = await User.findById(_id);
+      user.status = "offline";
+      user.newMessage = newMessage;
+      await user.save();
+      const members = await User.find();
+      socket.broadcast.emit("new-user", members);
+      res.status(200).send();
+    } catch (error) {
+      console.log(error);
+      res.status(400).send();
+    }
+  });
 });
 
 app.get("/rooms", (req, res) => {
