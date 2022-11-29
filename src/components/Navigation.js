@@ -19,7 +19,7 @@ const Navigation = () => {
   };
 
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="light" expand="lg" className="mb-4">
       <Container>
         <LinkContainer to="/">
           <Navbar.Brand>
@@ -59,13 +59,9 @@ const Navigation = () => {
                 }
                 id="basic-nav-dropdown"
               >
-                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">
-                  Another action
-                </NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.3">
-                  Something
-                </NavDropdown.Item>
+                <NavDropdown.Item>Action</NavDropdown.Item>
+                <NavDropdown.Item>Another action</NavDropdown.Item>
+                <NavDropdown.Item>Something</NavDropdown.Item>
 
                 <NavDropdown.Item>
                   <Button variant="danger" onClick={handleLogout}>
